@@ -8,89 +8,113 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
+    /* Metro Blue Brand Colors */
+    --primary: 218 48% 35%;
+    --primary-foreground: 0 0% 100%;
+    --primary-dark: 218 58% 25%;
+    --primary-light: 218 38% 55%;
+    
+    /* Secondary Purple Accent */
+    --secondary: 263 85% 62%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-dark: 263 85% 52%;
+    
+    /* Teal Accent */
+    --accent: 174 72% 45%;
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 174 62% 65%;
+    
+    /* Background & Cards */
+    --background: 220 35% 97%;
+    --foreground: 222 47% 11%;
+    
+    /* Glass Effect Cards */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card-foreground: 222 47% 11%;
+    --card-glass: 0 0% 100% / 0.7;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(218 48% 35%), hsl(263 85% 62%));
+    --gradient-secondary: linear-gradient(135deg, hsl(263 85% 62%), hsl(174 72% 45%));
+    --gradient-bg: linear-gradient(135deg, hsl(218 48% 35% / 0.1), hsl(263 85% 62% / 0.1), hsl(174 72% 45% / 0.1));
+    
+    /* UI Elements */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --popover-foreground: 222 47% 11%;
+    
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 218 48% 35%;
+    
+    /* Sidebar */
+    --sidebar-background: 218 48% 35%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 218 48% 35%;
+    --sidebar-accent: 218 48% 45%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 218 48% 25%;
+    --sidebar-ring: 0 0% 100%;
+    
+    /* Effects */
+    --radius: 1rem;
+    --blur: 16px;
+    --shadow-sm: 0 1px 2px 0 hsl(218 48% 35% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(218 48% 35% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(218 48% 35% / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(218 48% 35% / 0.1);
+    --shadow-glow: 0 0 20px hsl(263 85% 62% / 0.3);
+    
+    /* Animations */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222 84% 5%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 222 84% 8%;
     --card-foreground: 210 40% 98%;
+    --card-glass: 222 84% 8% / 0.7;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 222 84% 5%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 218 48% 45%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 263 85% 72%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 217 33% 18%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 174 72% 55%;
+    --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --border: 217 33% 18%;
+    --input: 217 33% 18%;
+    --ring: 218 48% 45%;
+    
+    --sidebar-background: 222 84% 8%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 218 48% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 222 84% 12%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 18%;
+    --sidebar-ring: 218 48% 45%;
   }
 }
 
@@ -101,5 +125,71 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Glass morphism styles */
+@layer components {
+  .glass {
+    @apply backdrop-blur-md bg-white/70 border border-white/20 shadow-xl;
+  }
+  
+  .glass-dark {
+    @apply backdrop-blur-md bg-gray-900/70 border border-gray-700/20 shadow-xl;
+  }
+  
+  .gradient-bg {
+    background: linear-gradient(135deg, 
+      hsl(218 48% 35% / 0.03), 
+      hsl(263 85% 62% / 0.03), 
+      hsl(174 72% 45% / 0.03));
+  }
+  
+  .animated-gradient {
+    background: linear-gradient(270deg, 
+      hsl(218 48% 35%), 
+      hsl(263 85% 62%), 
+      hsl(174 72% 45%), 
+      hsl(218 48% 35%));
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+  
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+  
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200;
+  }
+  
+  .sidebar-link-active {
+    @apply bg-white/20 text-white font-medium;
+  }
+  
+  .sidebar-link:not(.sidebar-link-active):hover {
+    @apply bg-white/10 text-white;
+  }
+  
+  .metric-card {
+    @apply glass rounded-xl p-6 hover-scale;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-2 rounded-lg border border-border bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200;
+  }
+  
+  .btn-primary {
+    @apply px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-all duration-200 hover:shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply px-6 py-2.5 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/90 transition-all duration-200 hover:shadow-lg;
   }
 }
