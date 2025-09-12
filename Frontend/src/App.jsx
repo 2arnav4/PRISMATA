@@ -9,6 +9,7 @@ import SmartSearch from './pages/SmartSearch';
 import History from './pages/History';
 import Profile from './pages/Profile';
 import SignIn from './pages/SignIn';
+import Login from './pages/Login';
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
           <AnimatedBackground />
           <Routes>
             <Route path="/signin" element={<SignIn />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
             <Route
               path="/*"
               element={
@@ -25,7 +28,7 @@ function App() {
                   <Navbar />
                   <div className="ml-64">
                     <Routes>
-                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/upload" element={<UploadDocuments />} />
                       <Route path="/search" element={<SmartSearch />} />
                       <Route path="/history" element={<History />} />

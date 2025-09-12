@@ -1,10 +1,18 @@
 from flask import Blueprint, request, jsonify
 from storage.db import insert_user, check_user_credentials, get_user_by_username
+from flask_cors import cross_origin
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/register', methods=['POST', 'OPTIONS'])
+@cross_origin()
 def register():
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    print(f"Register request received: {request.method}")
+    print(f"Request data: {request.get_json()}")
+    
     data = request.json or request.form
     username = data.get('username')
     password = data.get('password')
@@ -19,8 +27,15 @@ def register():
     insert_user(username, password, department)
     return jsonify({"message": "Registration successful."}), 201
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST', 'OPTIONS'])
+@cross_origin()
 def login():
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    print(f"Login request received: {request.method}")
+    print(f"Request data: {request.get_json()}")
+    
     data = request.json or request.form
     username = data.get('username')
     password = data.get('password')

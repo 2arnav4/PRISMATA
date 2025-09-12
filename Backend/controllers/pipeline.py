@@ -64,7 +64,7 @@ def extract_text_from_pdf(path: str) -> str:
     # fallback OCR
     if pytesseract and convert_from_path:
         print("   No text found, trying OCR fallback...")
-        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+        # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
         pages = convert_from_path(path)
         ocr_texts = []
         for p in pages:

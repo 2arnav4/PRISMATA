@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Upload, File, CheckCircle, XCircle, Clock, FileText } from 'lucide-react';
+import { Upload, File, CheckCircle, XCircle, Clock, FileText, Brain } from 'lucide-react';
+
+// Backend API URL - adjust this to match your backend server
+const API_BASE_URL = 'http://127.0.0.1:5000';
 
 const UploadDocuments = () => {
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState([
-    { id: 1, name: 'Safety_Report_Q3_2024.pdf', status: 'completed', size: '2.4 MB' },
-    { id: 2, name: 'Station_Maintenance_Schedule.docx', status: 'uploading', size: '1.1 MB', progress: 65 },
-    { id: 3, name: 'Budget_Analysis_2024.xlsx', status: 'error', size: '3.2 MB' }
-  ]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [processingInfo, setProcessingInfo] = useState(null);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -31,38 +31,88 @@ const UploadDocuments = () => {
     handleFiles(files);
   };
 
-  const handleFiles = (files) => {
+  const uploadFileToBackend = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('pdf', file);
+
+      const response = await fetch(`${API_BASE_URL}/process/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('Upload and processing successful:', result);
+      return { success: true, data: result };
+    } catch (error) {
+      console.error('Upload error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const handleFiles = async (files) => {
     const newFiles = files.map((file, index) => ({
       id: Date.now() + index,
       name: file.name,
       status: 'uploading',
       size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-      progress: 0
+      progress: 10
     }));
 
-    setUploadedFiles([...uploadedFiles, ...newFiles]);
+    setUploadedFiles(prev => [...prev, ...newFiles]);
 
-    // Simulate upload progress
-    newFiles.forEach((file) => {
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 10;
-        if (progress >= 100) {
-          clearInterval(interval);
+    // Upload each file to backend and process with LLM
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const newFile = newFiles[i];
+      
+      try {
+        // Show processing status
+        setUploadedFiles(prev => 
+          prev.map(f => 
+            f.id === newFile.id ? { ...f, status: 'processing', progress: 50 } : f
+          )
+        );
+
+        // Upload to backend for LLM processing
+        const result = await uploadFileToBackend(file);
+        
+        if (result.success) {
+          // Upload and processing successful
           setUploadedFiles(prev => 
             prev.map(f => 
-              f.id === file.id ? { ...f, status: 'completed', progress: 100 } : f
+              f.id === newFile.id ? { 
+                ...f, 
+                status: 'completed', 
+                progress: 100,
+                processingResult: result.data
+              } : f
             )
           );
+          
+          // Set the latest processing info for display
+          setProcessingInfo(result.data);
         } else {
+          // Upload/processing failed
           setUploadedFiles(prev => 
             prev.map(f => 
-              f.id === file.id ? { ...f, progress } : f
+              f.id === newFile.id ? { ...f, status: 'error', progress: 0 } : f
             )
           );
         }
-      }, 200);
-    });
+      } catch (error) {
+        // Upload failed
+        setUploadedFiles(prev => 
+          prev.map(f => 
+            f.id === newFile.id ? { ...f, status: 'error', progress: 0 } : f
+          )
+        );
+      }
+    }
   };
 
   const getStatusIcon = (status) => {
@@ -73,15 +123,22 @@ const UploadDocuments = () => {
         return <XCircle className="w-5 h-5 text-destructive" />;
       case 'uploading':
         return <Clock className="w-5 h-5 text-secondary animate-spin" />;
+      case 'processing':
+        return <Brain className="w-5 h-5 text-primary animate-pulse" />;
       default:
         return <File className="w-5 h-5 text-muted-foreground" />;
     }
   };
 
+  // Calculate stats from uploaded files
+  const completedFiles = uploadedFiles.filter(f => f.status === 'completed').length;
+  const processingFiles = uploadedFiles.filter(f => f.status === 'processing' || f.status === 'uploading').length;
+  const errorFiles = uploadedFiles.filter(f => f.status === 'error').length;
+
   const stats = [
-    { label: "Today's Upload", value: 12, color: 'text-accent' },
-    { label: 'Pending Reviews', value: 5, color: 'text-destructive' },
-    { label: 'Awaiting Assignment', value: 3, color: 'text-secondary' }
+    { label: "Completed", value: completedFiles, color: 'text-accent' },
+    { label: 'Processing', value: processingFiles, color: 'text-primary' },
+    { label: 'Errors', value: errorFiles, color: 'text-destructive' }
   ];
 
   return (
@@ -101,10 +158,10 @@ const UploadDocuments = () => {
           >
             <Upload className="w-16 h-16 mx-auto mb-4 text-primary" />
             <h3 className="text-lg font-semibold mb-2">
-              Select your file or drag and drop
+              Upload Document for AI Processing
             </h3>
             <p className="text-sm text-muted-foreground mb-6">
-              PNG, PDF, JPG, DOCX accepted
+              PDF files supported. AI will automatically extract text, detect language, summarize, and categorize your document.
             </p>
             <label className="btn-primary cursor-pointer">
               Browse
@@ -112,37 +169,56 @@ const UploadDocuments = () => {
                 type="file"
                 className="hidden"
                 multiple
-                accept=".png,.pdf,.jpg,.jpeg,.docx"
+                accept=".pdf"
                 onChange={handleFileInput}
               />
             </label>
           </div>
         </div>
 
-        {/* Document Preview */}
+        {/* LLM Processing Results */}
         <div className="glass rounded-xl p-6 border-2 border-primary">
           <h3 className="font-semibold mb-4 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-primary" />
-            Document Preview
+            <Brain className="w-5 h-5 text-primary" />
+            AI Processing Results
           </h3>
-          <div className="space-y-2 text-sm">
-            <div>
-              <span className="text-muted-foreground">Title:</span>
-              <p className="font-medium">Department Report</p>
+          {processingInfo ? (
+            <div className="space-y-3 text-sm">
+              <div>
+                <span className="text-muted-foreground">Department:</span>
+                <p className="font-medium text-primary">{processingInfo.department_label}</p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Language:</span>
+                <p className="font-medium">{processingInfo.language || 'Unknown'}</p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Summary:</span>
+                <p className="font-medium text-xs bg-background/50 p-2 rounded mt-1 max-h-20 overflow-y-auto">
+                  {processingInfo.summary || 'No summary available'}
+                </p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Text Length:</span>
+                <p className="font-medium text-xs">
+                  {processingInfo.original_text ? `${processingInfo.original_text.length} characters` : '0 characters'}
+                </p>
+              </div>
+              {processingInfo.translated_text && processingInfo.translated_text !== processingInfo.original_text && (
+                <div>
+                  <span className="text-muted-foreground">Translated:</span>
+                  <p className="font-medium text-xs bg-background/30 p-2 rounded mt-1 max-h-16 overflow-y-auto">
+                    {processingInfo.translated_text.substring(0, 100)}...
+                  </p>
+                </div>
+              )}
             </div>
-            <div>
-              <span className="text-muted-foreground">Department:</span>
-              <p className="font-medium">Operations</p>
+          ) : (
+            <div className="text-center text-muted-foreground">
+              <Brain className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <p className="text-xs">Upload a document to see AI analysis results</p>
             </div>
-            <div>
-              <span className="text-muted-foreground">Language:</span>
-              <p className="font-medium">(English/Malayalam)</p>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Priority:</span>
-              <p className="font-medium">(High/Medium/Low)</p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -170,7 +246,7 @@ const UploadDocuments = () => {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                {file.status === 'uploading' && (
+                {(file.status === 'uploading' || file.status === 'processing') && (
                   <div className="w-32">
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
@@ -184,9 +260,16 @@ const UploadDocuments = () => {
                   </div>
                 )}
                 {file.status === 'completed' && (
-                  <span className="text-xs bg-accent/20 text-accent px-2 py-1 rounded-full">
-                    Completed
-                  </span>
+                  <div className="flex flex-col items-end gap-1">
+                    <span className="text-xs bg-accent/20 text-accent px-2 py-1 rounded-full">
+                      Completed
+                    </span>
+                    {file.processingResult && (
+                      <span className="text-xs text-muted-foreground">
+                        → {file.processingResult.department_label}
+                      </span>
+                    )}
+                  </div>
                 )}
                 {file.status === 'error' && (
                   <span className="text-xs bg-destructive/20 text-destructive px-2 py-1 rounded-full">

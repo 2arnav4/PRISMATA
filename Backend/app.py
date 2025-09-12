@@ -3,16 +3,25 @@ from storage.db import init_db
 from controllers.auth import auth_bp
 from controllers.processor import processor_bp
 from controllers.documents import documents_bp
+from flask_cors import CORS # Import CORS
 
 def create_app():
     app = Flask(__name__)
+    
+    # Configure CORS to allow requests from frontend
+    CORS(app, 
+         origins=['http://localhost:8080', 'http://localhost:3000', 'http://127.0.0.1:8080', 'http://127.0.0.1:3000'],
+         methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+         allow_headers=['Content-Type', 'Authorization'],
+         supports_credentials=True)
+    
     app.secret_key = 'your-secret-key'  # Change in production!
 
     # Initialize database (creates tables if not exists)
     init_db()
 
     # Register blueprints
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(processor_bp, url_prefix='/process')
     app.register_blueprint(documents_bp, url_prefix='/documents')
 

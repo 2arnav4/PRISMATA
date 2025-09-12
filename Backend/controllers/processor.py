@@ -33,4 +33,4 @@ def upload_pdf():
         notes=None
     )
 
-    return jsonify({"message": "Document processed and saved successfully."}), 201
+    return jsonify(result), 201
