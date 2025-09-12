@@ -23,15 +23,15 @@ export const UserProvider = ({ children }) => {
     setUser({ ...userData, isLoggedIn: true });
   };
 
-  const logout = () => {
-    setUser({
-      name: 'Guest',
-      role: 'Visitor',
-      department: '',
-      email: '',
-      isLoggedIn: false
-    });
-  };
+  // const logout = () => {
+  //   setUser({
+  //     name: 'Guest',
+  //     role: 'Visitor',
+  //     department: '',
+  //     email: '',
+  //     isLoggedIn: false
+  //   });
+  // };
 
   return (
     <UserContext.Provider value={{ user, login, logout }}>
