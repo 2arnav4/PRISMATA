@@ -17,7 +17,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const navItems = [
-    { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
+    { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' }, // Changed this line from '/' to '/dashboard'
     { path: '/upload', icon: Upload, label: 'Upload Documents' },
     { path: '/search', icon: Search, label: 'Smart Search' },
     { path: '/history', icon: History, label: 'History' },
@@ -37,8 +37,8 @@ const Navbar = () => {
           <div className="flex items-center gap-3">
             <Train className="w-8 h-8" />
             <div>
-              <h1 className="text-xl font-bold">KOCHI</h1>
-              <p className="text-xs opacity-80">METRO RAIL LTD</p>
+              <h1 className="text-xl font-bold">PRISMATA</h1>
+              <p className="text-xs opacity-80">KOCHI METRO RAIL LTD</p>
             </div>
           </div>
         </div>

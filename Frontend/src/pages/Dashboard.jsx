@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
-import { 
-  Train, 
-  Users, 
-  FileText, 
+import {
+  Train,
+  Users,
+  FileText,
   Calendar,
   Bell,
   TrendingUp,
@@ -25,8 +25,36 @@ import {
   Legend
 } from 'recharts';
 
+const API_BASE_URL = 'http://127.0.0.1:5000';
+
 const Dashboard = () => {
   const { user } = useUser();
+  const [criticalDocs, setCriticalDocs] = useState([]);
+
+  useEffect(() => {
+    const fetchCriticalDocs = async () => {
+      if (user.department) {
+        try {
+          const response = await fetch(`${API_BASE_URL}/documents/latest?department=${user.department}`);
+          if (response.ok) {
+            const data = await response.json();
+            // Assuming the API returns an object with a 'documents' key which is an array
+            if (data.documents) {
+              // Limiting to the latest 3 documents for display on the dashboard
+              setCriticalDocs(data.documents.slice(0, 3));
+            }
+          } else {
+            console.error('Failed to fetch documents');
+          }
+        } catch (error) {
+          console.error('Error fetching documents:', error);
+        }
+      }
+    };
+
+    fetchCriticalDocs();
+  }, [user.department]);
+
 
   // Dummy data for charts
   const visitorData = [
@@ -50,12 +78,6 @@ const Dashboard = () => {
     { name: 'Horizon UI Free', status: 'Disable', date: '18 Apr 2021', progress: 30 },
     { name: 'Marketplace', status: 'Error', date: '20 May 2021', progress: 65 },
     { name: 'Weekly Updates', status: 'Approved', date: '12 Jul 2021', progress: 100 }
-  ];
-
-  const criticalDocs = [
-    { id: 1, title: 'Safety Bulletins', count: 3 },
-    { id: 2, title: 'Compliance Deadlines', count: 2 },
-    { id: 3, title: 'Vendor Alert', count: 1 }
   ];
 
   const notifications = [
@@ -145,16 +167,13 @@ const Dashboard = () => {
               <div key={doc.id} className="flex items-center justify-between p-3 bg-white/50 rounded-lg">
                 <div className="flex items-center gap-3">
                   <FileText className="w-5 h-5 text-primary" />
-                  <span className="text-sm font-medium">{doc.title}</span>
+                  <span className="text-sm font-medium">{doc.file_name}</span>
                 </div>
                 <span className="text-xs bg-destructive/20 text-destructive px-2 py-1 rounded-full">
-                  {doc.count}
+                  {doc.department_label}
                 </span>
               </div>
             ))}
-          </div>
-          <div className="mt-4 pt-4 border-t">
-            <p className="text-xs text-muted-foreground">1 Vendor Alert</p>
           </div>
         </div>
 
@@ -224,7 +243,7 @@ const Dashboard = () => {
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-primary rounded-full"
                           style={{ width: `${task.progress}%` }}
                         />

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const UserContext = createContext();
 
@@ -18,12 +18,29 @@ export const UserProvider = ({ children }) => {
     email: '',
     isLoggedIn: false
   });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    try {
+      const storedUser = sessionStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (error) {
+      console.error("Failed to parse user from session storage", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const login = (userData) => {
-    setUser({ ...userData, isLoggedIn: true });
+    const userState = { ...userData, isLoggedIn: true };
+    sessionStorage.setItem('user', JSON.stringify(userState));
+    setUser(userState);
   };
 
   const logout = () => {
+    sessionStorage.removeItem('user');
     setUser({
       name: 'Guest',
       role: 'Visitor',
@@ -34,7 +51,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </UserContext.Provider>
   );
