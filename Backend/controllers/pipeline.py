@@ -179,8 +179,8 @@ def classify_with_keywords(text: str) -> str:
         return "Finance"
     if any(w in t for w in ["training", "employee", "staff", "hr"]):
         return "HR"
-    if any(w in t for w in ["maintenance", "job card", "engine", "overhaul"]):
-        return "Engineering"
+    if any(w in t for w in ["operations", "job card", "engine", "overhaul"]):
+        return "Operations"
     if any(w in t for w in ["safety", "circular", "hazard", "alert"]):
         return "Safety"
     if any(w in t for w in ["purchase order", "vendor", "procurement"]):
@@ -192,11 +192,11 @@ def classify_text(text: str, llm=None) -> str:
     print(">> Classifying text...")
     if llm and llm.flantokenizer and llm.flanmodel:
         try:
-            prompt = f"Which of these departments is this message suited for? [Finance, HR, Engineering, Safety, Procurement, Other]:\n\n{text[:1000]}"
+            prompt = f"Which of these departments is this message suited for? [Finance, HR, Operations, Safety, Procurement, Other]:\n\n{text[:1000]}"
             inputs = llm.flantokenizer(prompt, return_tensors="pt", truncation=True)
             outputs = llm.flanmodel.generate(**inputs, max_length=50)
             llm_result = llm.flantokenizer.decode(outputs[0], skip_special_tokens=True)
-            if any(cat in llm_result for cat in ["Finance", "HR", "Engineering", "Safety", "Procurement", "Other"]):
+            if any(cat in llm_result for cat in ["Finance", "HR", "Operations", "Safety", "Procurement", "Other"]):
                 print("   Classified using Local LLM:", llm_result)
                 return llm_result
             else:
